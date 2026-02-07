@@ -129,7 +129,7 @@
 
     .social-btn svg { width:22px; height:22px; opacity:.95; }
 
-    /* ✅ SUBTABS */
+    /* SUBTABS */
     .subtab-btn {
       padding: 8px 16px;
       border-radius: 12px;
@@ -147,7 +147,7 @@
       border-color: var(--accent);
     }
 
-    /* ✅ LONG GRID: 2 vidéos par ligne */
+    /* LONG GRID */
     .long-grid {
       display: grid;
       grid-template-columns: repeat(1, minmax(0, 1fr));
@@ -161,14 +161,21 @@
       }
     }
 
-    /* Si dernière vidéo seule -> pleine largeur */
     @media (min-width: 768px) {
       .long-grid > .video-item:last-child:nth-child(odd) {
         grid-column: 1 / -1;
       }
     }
 
-    /* ✅ SHORTS GRID: occupe toute la ligne équitablement */
+    /* ✅ SHORTS GRID PRO */
+    .shorts-grid-wrapper{
+      max-height: calc((100vw / 4) * (16/9) * 2 + 24px);
+      /* fallback: sera recalculé en JS */
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    /* Le grid */
     .shorts-grid {
       display: grid;
       gap: 16px;
@@ -187,7 +194,12 @@
       }
     }
 
-    /* ✅ Thumbnail */
+    /* 🔥 IMPORTANT: shorts doivent remplir la ligne même si 1/2/3 */
+    .shorts-grid > .video-item{
+      width:100%;
+    }
+
+    /* Preview */
     .yt-thumb {
       width:100%;
       height:100%;
@@ -290,6 +302,42 @@
       fill:white;
       opacity:.95;
     }
+
+    /* Long preview badge */
+    .badge-long{
+      position:absolute;
+      left:14px;
+      top:14px;
+      z-index:50;
+      padding:8px 10px;
+      border-radius:999px;
+      background:rgba(0,0,0,0.55);
+      border:1px solid rgba(255,255,255,0.08);
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+      backdrop-filter: blur(10px);
+      color:#fff;
+      opacity:.95;
+    }
+      .badge-short{
+      position:absolute;
+      left:14px;
+      top:14px;
+      z-index:50;
+      padding:8px 10px;
+      border-radius:999px;
+      background:rgba(0,0,0,0.55);
+      border:1px solid rgba(255,255,255,0.08);
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+      backdrop-filter: blur(10px);
+      color:#fff;
+      opacity:.95;
+    }
   </style>
 </head>
 
@@ -387,123 +435,103 @@
 
         <!-- SHORTS -->
         <div id="shorts-wrapper">
-          <div id="shorts-content" class="shorts-grid transition-all duration-500">
+          <div class="shorts-grid-wrapper">
+            <div id="shorts-content" class="shorts-grid transition-all duration-500">
 
-            <!-- Short Form – Talking Head -->
-            <div class="video-item aspect-[9/16] yt-short short-talking" data-video-id="z6JMaEGuCjY">
-              <div class="skeleton"></div>
-              <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/z6JMaEGuCjY/hqdefault.jpg')"></div>
-              <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
+              <!-- Short Form – Talking Head -->
+              <div class="video-item aspect-[9/16] yt-short short-talking" data-video-id="z6JMaEGuCjY">
+                <div class="skeleton"></div>
+                <div class="badge-short">Talking Head</div>
+                <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/z6JMaEGuCjY/hqdefault.jpg')"></div>
+                <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
+              </div>
+
+              <div class="video-item aspect-[9/16] yt-short short-talking" data-video-id="ueABS9TACHE">
+                <div class="skeleton"></div>
+                <div class="badge-short">Talking Head</div>
+                <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/ueABS9TACHE/hqdefault.jpg')"></div>
+                <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
+              </div>
+
+              <div class="video-item aspect-[9/16] yt-short short-talking" data-video-id="ouN49K_iwdw">
+                <div class="skeleton"></div>
+                <div class="badge-short">Talking Head</div>
+                <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/ouN49K_iwdw/hqdefault.jpg')"></div>
+                <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
+              </div>
+
+              <!-- Short Form – Real Estate -->
+              <div class="video-item aspect-[9/16] yt-short short-realestate hidden" data-video-id="p5tvffMHIW4">
+                <div class="skeleton"></div>
+                <div class="badge-short">Real Estate</div>
+                <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/p5tvffMHIW4/hqdefault.jpg')"></div>
+                <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
+              </div>
+
+              <div class="video-item aspect-[9/16] yt-short short-realestate hidden" data-video-id="GBX34L6v7CY">
+                <div class="skeleton"></div>
+                <div class="badge-short">Real Estate</div>
+
+                <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/GBX34L6v7CY/hqdefault.jpg')"></div>
+                <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
+              </div>
+
             </div>
-
-            <div class="video-item aspect-[9/16] yt-short short-talking" data-video-id="ueABS9TACHE">
-              <div class="skeleton"></div>
-              <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/ueABS9TACHE/hqdefault.jpg')"></div>
-              <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
-            </div>
-
-            <div class="video-item aspect-[9/16] yt-short short-talking" data-video-id="ouN49K_iwdw">
-              <div class="skeleton"></div>
-              <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/ouN49K_iwdw/hqdefault.jpg')"></div>
-              <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
-            </div>
-
-            <!-- Short Form – Real Estate -->
-            <div class="video-item aspect-[9/16] yt-short short-realestate hidden" data-video-id="p5tvffMHIW4">
-              <div class="skeleton"></div>
-              <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/p5tvffMHIW4/hqdefault.jpg')"></div>
-              <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
-            </div>
-
-            <div class="video-item aspect-[9/16] yt-short short-realestate hidden" data-video-id="GBX34L6v7CY">
-              <div class="skeleton"></div>
-              <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/GBX34L6v7CY/hqdefault.jpg')"></div>
-              <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
-            </div>
-
           </div>
         </div>
 
         <!-- LONG FORM -->
         <div id="long-content" class="hidden long-grid transition-all duration-500">
 
-          <!-- Long Form – Talking Head -->
-          <div class="video-item aspect-video w-full long-wrap" data-sub="long-talking">
+          <!-- Long Talking -->
+          <div class="video-item aspect-video w-full yt-long long-wrap" data-sub="long-talking" data-video-id="bSQq6W4B2kE">
             <div class="skeleton"></div>
-            <button class="mute-btn" data-muted="1" onclick="toggleMute(event)">
-              <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg>
-              <span>Muted</span>
-            </button>
-            <iframe class="js-long"
-              src="https://www.youtube.com/embed/bSQq6W4B2kE?enablejsapi=1&rel=0&playsinline=1&mute=1&vq=hd1080"
-              allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <div class="badge-long">Talking Head</div>
+            <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/bSQq6W4B2kE/hqdefault.jpg')"></div>
+            <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
           </div>
 
-          <div class="video-item aspect-video w-full long-wrap" data-sub="long-talking">
+          <div class="video-item aspect-video w-full yt-long long-wrap" data-sub="long-talking" data-video-id="VUyKrQgAOJo">
             <div class="skeleton"></div>
-            <button class="mute-btn" data-muted="1" onclick="toggleMute(event)">
-              <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg>
-              <span>Muted</span>
-            </button>
-            <iframe class="js-long"
-              src="https://www.youtube.com/embed/VUyKrQgAOJo?enablejsapi=1&rel=0&playsinline=1&mute=1&vq=hd1080"
-              allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <div class="badge-long">Talking Head</div>
+            <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/VUyKrQgAOJo/hqdefault.jpg')"></div>
+            <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
           </div>
 
-          <div class="video-item aspect-video w-full long-wrap" data-sub="long-talking">
+          <div class="video-item aspect-video w-full yt-long long-wrap" data-sub="long-talking" data-video-id="rwtU0EQ0j-8">
             <div class="skeleton"></div>
-            <button class="mute-btn" data-muted="1" onclick="toggleMute(event)">
-              <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg>
-              <span>Muted</span>
-            </button>
-            <iframe class="js-long"
-              src="https://www.youtube.com/embed/rwtU0EQ0j-8?enablejsapi=1&rel=0&playsinline=1&mute=1&vq=hd1080"
-              allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <div class="badge-long">Talking Head</div>
+            <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/rwtU0EQ0j-8/hqdefault.jpg')"></div>
+            <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
           </div>
 
-          <div class="video-item aspect-video w-full long-wrap" data-sub="long-talking">
+          <div class="video-item aspect-video w-full yt-long long-wrap" data-sub="long-talking" data-video-id="mkdGMHs6sRM">
             <div class="skeleton"></div>
-            <button class="mute-btn" data-muted="1" onclick="toggleMute(event)">
-              <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg>
-              <span>Muted</span>
-            </button>
-            <iframe class="js-long"
-              src="https://www.youtube.com/embed/mkdGMHs6sRM?enablejsapi=1&rel=0&playsinline=1&mute=1&vq=hd1080"
-              allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <div class="badge-long">Talking Head</div>
+            <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/mkdGMHs6sRM/hqdefault.jpg')"></div>
+            <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
           </div>
 
-          <!-- Long Form – Documentary -->
-          <div class="video-item aspect-video w-full long-wrap hidden" data-sub="long-documentary">
+          <!-- Long Documentary -->
+          <div class="video-item aspect-video w-full yt-long long-wrap hidden" data-sub="long-documentary" data-video-id="KfBdcUpL2bA">
             <div class="skeleton"></div>
-            <button class="mute-btn" data-muted="1" onclick="toggleMute(event)">
-              <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg>
-              <span>Muted</span>
-            </button>
-            <iframe class="js-long"
-              src="https://www.youtube.com/embed/KfBdcUpL2bA?enablejsapi=1&rel=0&playsinline=1&mute=1&vq=hd1080"
-              allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <div class="badge-long">Documentary</div>
+            <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/KfBdcUpL2bA/hqdefault.jpg')"></div>
+            <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
           </div>
 
-          <div class="video-item aspect-video w-full long-wrap hidden" data-sub="long-documentary">
+          <div class="video-item aspect-video w-full yt-long long-wrap hidden" data-sub="long-documentary" data-video-id="0AD9KXuIuGE">
             <div class="skeleton"></div>
-            <button class="mute-btn" data-muted="1" onclick="toggleMute(event)">
-              <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg>
-              <span>Muted</span>
-            </button>
-            <iframe class="js-long"
-              src="https://www.youtube.com/embed/0AD9KXuIuGE?enablejsapi=1&rel=0&playsinline=1&mute=1&vq=hd1080"
-              allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <div class="badge-long">Documentary</div>
+            <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/0AD9KXuIuGE/hqdefault.jpg')"></div>
+            <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
           </div>
 
-          <div class="video-item aspect-video w-full long-wrap hidden" data-sub="long-documentary">
+          <div class="video-item aspect-video w-full yt-long long-wrap hidden" data-sub="long-documentary" data-video-id="8X7TBZbk0h0">
             <div class="skeleton"></div>
-            <button class="mute-btn" data-muted="1" onclick="toggleMute(event)">
-              <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg>
-              <span>Muted</span>
-            </button>
-            <iframe class="js-long"
-              src="https://www.youtube.com/embed/8X7TBZbk0h0?enablejsapi=1&rel=0&playsinline=1&mute=1&vq=hd1080"
-              allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <div class="badge-long">Documentary</div>
+            <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/8X7TBZbk0h0/hqdefault.jpg')"></div>
+            <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
           </div>
 
         </div>
@@ -564,15 +592,6 @@
       }
     }
 
-    function clearAllPlayers(){
-      if(observerLong){
-        try { observerLong.disconnect(); } catch(e){}
-        observerLong = null;
-      }
-      players.forEach(p => destroyPlayer(p));
-      players = [];
-    }
-
     function buildYTPlayer(iframeEl, onReadyCb = null) {
       if (!iframeEl.id) iframeEl.id = "player-" + Math.random().toString(16).slice(2);
 
@@ -600,14 +619,16 @@
 
     function onYouTubeIframeAPIReady() {
       initShortsClickToPlay();
-      initLongPlayers();
-      initVisibilityChangePause();
+      initLongPreviewClickToPlay();
       initThumbSkeletonFix();
+      initVisibilityChangePause();
       updateSubTabDisplay();
+      setupShortsScrollLimit();
+      window.addEventListener("resize", setupShortsScrollLimit);
     }
 
     function initThumbSkeletonFix() {
-      document.querySelectorAll(".yt-short").forEach(card => {
+      document.querySelectorAll(".video-item").forEach(card => {
         const thumb = card.querySelector(".yt-thumb");
         if (!thumb) return;
 
@@ -629,6 +650,7 @@
       });
     }
 
+    /* -------------------- SHORTS -------------------- */
     function initShortsClickToPlay() {
       document.querySelectorAll(".yt-short").forEach((card) => {
         const videoId = card.getAttribute("data-video-id");
@@ -671,45 +693,81 @@
       });
     }
 
-    function initLongPlayers(){
-      // Build players for ALL long iframes (even hidden ones)
-      document.querySelectorAll(".js-long").forEach((iframe) => {
-        buildYTPlayer(iframe, (e) => {
-          try { e.target.setPlaybackQuality("hd1080"); } catch(err){}
-        });
-      });
+    function setupShortsScrollLimit(){
+      // max 2 lignes visibles, scroll si > 8
+      const wrapper = document.querySelector(".shorts-grid-wrapper");
+      const grid = document.querySelector(".shorts-grid");
+      if(!wrapper || !grid) return;
 
-      // Observer autoplay
-      observerLong = new IntersectionObserver((entries) => {
-        document.querySelectorAll('#long-content .video-item').forEach(v => v.classList.remove('active-video'));
+      const visibleItems = Array.from(grid.children).filter(el => !el.classList.contains("hidden"));
+      if(visibleItems.length <= 8){
+        wrapper.style.maxHeight = "none";
+        wrapper.style.overflowY = "visible";
+        return;
+      }
 
-        entries.forEach(entry => {
-          const wrap = entry.target.closest('.video-item');
-          if (!wrap) return;
+      // On calcule la hauteur d’un short visible
+      const first = visibleItems[0];
+      const rect = first.getBoundingClientRect();
+      const itemHeight = rect.height;
 
-          const player = players.find(p => {
-            try { return p.getIframe() === entry.target; } catch(e){ return false; }
-          });
+      // 2 lignes + gap
+      const computed = window.getComputedStyle(grid);
+      const gap = parseFloat(computed.gap || "16");
 
-          if (!player) return;
-
-          if (entry.isIntersecting && currentTab === "long") {
-            wrap.classList.add('active-video');
-            try {
-              pauseAllVideos(player);
-              player.mute();
-              player.playVideo();
-              player.setPlaybackQuality("hd1080");
-            } catch(e){}
-          } else {
-            try { player.pauseVideo(); } catch(e){}
-          }
-        });
-      }, { threshold: 0.5 });
-
-      document.querySelectorAll(".js-long").forEach(iframe => observerLong.observe(iframe));
+      const maxH = (itemHeight * 2) + gap;
+      wrapper.style.maxHeight = maxH + "px";
+      wrapper.style.overflowY = "auto";
     }
 
+    /* -------------------- LONG (Preview + Play) -------------------- */
+    function initLongPreviewClickToPlay() {
+      document.querySelectorAll(".yt-long").forEach((card) => {
+        const videoId = card.getAttribute("data-video-id");
+
+        function startLong() {
+          pauseAllVideos();
+
+          card.innerHTML = `
+            <div class="skeleton"></div>
+            <button class="mute-btn" data-muted="1" onclick="toggleMute(event)">
+              <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg>
+              <span>Muted</span>
+            </button>
+            <iframe
+              class="js-long"
+              src="https://www.youtube.com/embed/${videoId}?enablejsapi=1&playsinline=1&rel=0&autoplay=1&mute=1&vq=hd1080"
+              allow="autoplay; encrypted-media"
+              allowfullscreen
+            ></iframe>
+          `;
+
+          const iframe = card.querySelector("iframe");
+          const player = buildYTPlayer(iframe, () => {
+            try { player.setPlaybackQuality("hd1080"); } catch(e){}
+          });
+
+          setTimeout(() => {
+            try { player.playVideo(); } catch(e){}
+          }, 150);
+        }
+
+        card.addEventListener("click", () => {
+          if (card.querySelector("iframe")) return;
+          startLong();
+        });
+
+        card.setAttribute("tabindex", "0");
+        card.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            if (card.querySelector("iframe")) return;
+            startLong();
+          }
+        });
+      });
+    }
+
+    /* -------------------- Tabs -------------------- */
     function switchTab(type) {
       pauseAllVideos();
 
@@ -735,7 +793,7 @@
       }
 
       updateSubTabDisplay();
-      setTimeout(() => window.dispatchEvent(new Event("scroll")), 120);
+      setTimeout(() => setupShortsScrollLimit(), 120);
     }
 
     function updateSubTabDisplay() {
@@ -771,7 +829,7 @@
         });
       }
 
-      setTimeout(() => window.dispatchEvent(new Event("scroll")), 80);
+      setTimeout(() => setupShortsScrollLimit(), 80);
     }
 
     function switchSubTab(sub) {
@@ -783,6 +841,7 @@
       document.getElementById('work').scrollIntoView({ behavior: 'smooth' });
     }
 
+    /* -------------------- Mute -------------------- */
     function toggleMute(event){
       event.preventDefault();
       event.stopPropagation();
