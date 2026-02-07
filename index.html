@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aymen mssd | High-Ticket Video Content Partner</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --accent:#8b5cf6;
+      --bg:#000;
+      --card:#0a0a0a;
+    }
+
+    body{
+      font-family:'Plus Jakarta Sans',sans-serif;
+      background:var(--bg);
+      color:#fff;
+      scroll-behavior:smooth;
+    }
+
+    ::-webkit-scrollbar{ height:6px; width:6px; }
+    ::-webkit-scrollbar-track{ background:#000; }
+    ::-webkit-scrollbar-thumb{ background:#222; border-radius:10px; }
+    ::-webkit-scrollbar-thumb:hover{ background:var(--accent); }
+
+    .video-item{
+      background:var(--card);
+      border-radius:16px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.06);
+      transition:all .35s ease;
+      position:relative;
+    }
+    .video-item:hover{
+      border-color:rgba(139,92,246,0.8);
+      transform:translateY(-4px);
+    }
+
+    iframe{ width:100%; height:100%; border:0; }
+
+    .tab-btn{
+      padding:9px 18px;
+      border-radius:14px;
+      font-size:12px;
+      font-weight:800;
+      color:#71717a;
+      transition:all .25s ease;
+      white-space:nowrap;
+    }
+    .tab-btn.active{
+      background:var(--accent);
+      color:#fff;
+      box-shadow:0 10px 30px rgba(139,92,246,0.18);
+    }
+
+    .glow-bg{
+      position:fixed;
+      top:-80px;
+      right:-120px;
+      width:520px;
+      height:520px;
+      background:radial-gradient(circle, rgba(139,92,246,0.12) 0%, rgba(0,0,0,0) 70%);
+      pointer-events:none;
+      z-index:0;
+    }
+
+    .fade-in{
+      animation:fadeIn .8s ease forwards;
+      opacity:0;
+      transform:translateY(10px);
+    }
+    @keyframes fadeIn{
+      to{ opacity:1; transform:translateY(0); }
+    }
+
+    .social-btn{
+      width:52px;
+      height:52px;
+      border-radius:999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#0b0b0b;
+      border:1px solid rgba(255,255,255,0.06);
+      transition:all .25s ease;
+    }
+    .social-btn:hover{
+      border-color:rgba(139,92,246,0.55);
+      transform:translateY(-2px);
+    }
+    .social-btn svg{
+      width:22px;
+      height:22px;
+      opacity:.95;
+    }
+
+    /* Shorts row */
+    .shorts-row{
+      display:flex;
+      gap:16px;
+      overflow-x:auto;
+      padding-bottom:10px;
+      scroll-snap-type:x mandatory;
+      scroll-behavior:smooth;
+    }
+    .short-card{
+      flex:0 0 calc((100% - 48px) / 4);
+      scroll-snap-align:start;
+    }
+    @media (max-width: 640px){
+      .short-card{
+        flex:0 0 calc((100% - 16px) / 2);
+      }
+    }
+
+    /* ======= THUMBNAIL (Shorts) ======= */
+    .yt-thumb{
+      width:100%;
+      height:100%;
+      position:absolute;
+      inset:0;
+      background-size:cover;
+      background-position:center;
+      cursor:pointer;
+    }
+
+    .yt-thumb::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(to top, rgba(0,0,0,0.45), rgba(0,0,0,0.05));
+    }
+
+    .play-btn{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:5;
+      pointer-events:none;
+    }
+
+    .play-btn span{
+      width:64px;
+      height:64px;
+      border-radius:999px;
+      background:rgba(0,0,0,0.55);
+      border:1px solid rgba(255,255,255,0.12);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      backdrop-filter: blur(6px);
+      transition:transform .2s ease;
+    }
+
+    .video-item:hover .play-btn span{
+      transform:scale(1.05);
+    }
+
+    .play-btn svg{
+      width:26px;
+      height:26px;
+      margin-left:3px;
+      fill:white;
+      opacity:.95;
+    }
+
+    /* Fix small scroll jump */
+    .video-item { scroll-margin-top: 120px; }
+
+    /* ==========================
+       Shorts arrows
+    ========================== */
+    .shorts-wrapper{
+      position:relative;
+    }
+
+    .shorts-arrow{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      z-index:30;
+      width:44px;
+      height:44px;
+      border-radius:999px;
+      background:rgba(0,0,0,0.65);
+      border:1px solid rgba(255,255,255,0.08);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      backdrop-filter: blur(10px);
+      transition:all .2s ease;
+    }
+    .shorts-arrow:hover{
+      border-color:rgba(139,92,246,0.6);
+      transform:translateY(-50%) scale(1.05);
+    }
+    .shorts-arrow svg{
+      width:18px;
+      height:18px;
+      fill:white;
+      opacity:.95;
+    }
+    .shorts-arrow.left{ left:-12px; }
+    .shorts-arrow.right{ right:-12px; }
+
+    @media (max-width: 640px){
+      .shorts-arrow.left{ left:6px; }
+      .shorts-arrow.right{ right:6px; }
+    }
+
+    /* ==========================
+       Skeleton / shimmer
+    ========================== */
+    .skeleton{
+      position:absolute;
+      inset:0;
+      background:linear-gradient(90deg, #0b0b0b 0%, #141414 45%, #0b0b0b 100%);
+      background-size:200% 100%;
+      animation: shimmer 1.3s infinite linear;
+      z-index:2;
+    }
+    @keyframes shimmer{
+      0%{ background-position: 200% 0; }
+      100%{ background-position: -200% 0; }
+    }
+
+    .hide-skeleton .skeleton{
+      display:none;
+    }
+
+    /* ==========================
+       Mute button (Long)
+    ========================== */
+    .mute-btn{
+      position:absolute;
+      top:14px;
+      right:14px;
+      z-index:50;
+      padding:10px 12px;
+      border-radius:14px;
+      background:rgba(0,0,0,0.6);
+      border:1px solid rgba(255,255,255,0.08);
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+      transition:all .2s ease;
+      backdrop-filter: blur(10px);
+    }
+    .mute-btn:hover{
+      border-color:rgba(139,92,246,0.6);
+      transform:scale(1.02);
+    }
+    .mute-btn svg{
+      width:18px;
+      height:18px;
+      fill:white;
+      opacity:.95;
+    }
+  </style>
+</head>
+
+<body class="antialiased overflow-x-hidden">
+
+  <div class="glow-bg"></div>
+
+  <section class="relative z-10 min-h-screen flex items-center px-6 md:px-20 py-20">
+    <div class="max-w-6xl mx-auto w-full grid md:grid-cols-2 gap-14 items-center">
+
+      <div class="space-y-7 text-center md:text-left fade-in" style="animation-delay:.1s;">
+
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg border border-purple-500/20 bg-purple-500/5 text-purple-400 text-[10px] font-extrabold tracking-[0.25em] uppercase">
+          High-Ticket Content Partner
+        </div>
+
+        <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.1]">
+          Reliable Editing for <br>
+          <span style="color:var(--accent)">Serious Creators</span>
+        </h1>
+
+        <p class="text-zinc-400 text-base sm:text-lg max-w-xl mx-auto md:mx-0 leading-relaxed">
+          Stop wasting time fixing bad edits. I provide <span class="text-white font-semibold">premium storytelling</span> that converts attention into revenue for brands and high-ticket creators.
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start pt-2">
+          <button onclick="scrollToWork()"
+            class="w-full sm:w-auto bg-[#8b5cf6] hover:bg-[#7c3aed] text-white px-7 py-3.5 rounded-2xl font-extrabold text-sm transition-all duration-300 shadow-lg shadow-purple-500/20">
+            See Professional Work
+          </button>
+
+          <a href="#contact"
+            class="w-full sm:w-auto bg-zinc-900 hover:bg-zinc-800 text-white px-7 py-3.5 rounded-2xl font-extrabold text-sm transition-all duration-300 border border-white/5 text-center">
+            Scale Your Content
+          </a>
+        </div>
+
+        <div class="flex gap-4 justify-center md:justify-start pt-4">
+          <a class="social-btn" href="https://x.com/aymenmssd123" target="_blank"><svg viewBox="0 0 24 24" fill="none"><path d="M17.5 3H21L13.3 11.8L22.4 21H15.4L9.9 15.2L4.8 21H1.3L9.6 11.4L0.9 3H8.1L13 8.2L17.5 3Z" fill="white"/></svg></a>
+          <a class="social-btn" href="https://instagram.com/aymen_mssd/" target="_blank"><svg viewBox="0 0 24 24" fill="none"><path d="M7 2H17C19.76 2 22 4.24 22 7V17C22 19.76 19.76 22 17 22H7C4.24 22 2 19.76 2 17V7C2 4.24 4.24 2 7 2Z" stroke="#ff3d00" stroke-width="2"/><path d="M12 16.2C14.3196 16.2 16.2 14.3196 16.2 12C16.2 9.6804 14.3196 7.8 12 7.8C9.6804 7.8 7.8 9.6804 7.8 12C7.8 14.3196 9.6804 16.2 12 16.2Z" stroke="#ff3d00" stroke-width="2"/><path d="M17.5 6.6H17.51" stroke="#ff3d00" stroke-width="3" stroke-linecap="round"/></svg></a>
+          <a class="social-btn" href="mailto:aymenmessdz31@gmail.com" target="_blank"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6H20V18H4V6Z" stroke="#3b82f6" stroke-width="2"/><path d="M4 7L12 13L20 7" stroke="#3b82f6" stroke-width="2"/></svg></a>
+          <a class="social-btn" href="https://wa.me/+213553667383" target="_blank"><svg viewBox="0 0 24 24" fill="none"><path d="M20.5 11.5C20.5 16.1944 16.6944 20 12 20C10.6 20 9.28 19.68 8.1 19.1L3.5 20.5L4.9 15.9C4.32 14.72 4 13.4 4 12C4 7.3056 7.8056 3.5 12.5 3.5C16.85 3.5 20.5 7.15 20.5 11.5Z" fill="#22c55e" opacity="0.95"/><path d="M10.2 9.2C10.45 8.9 10.7 8.9 10.95 9.15L11.6 9.9C11.8 10.1 11.85 10.35 11.7 10.6L11.35 11.2C11.2 11.45 11.25 11.65 11.4 11.85C12 12.8 12.85 13.55 13.85 14.1C14.05 14.2 14.25 14.2 14.4 14L15 13.35C15.2 13.15 15.45 13.1 15.7 13.25L16.55 13.75C16.85 13.9 16.9 14.2 16.75 14.45C16.35 15.15 15.65 15.55 14.85 15.4C12.3 14.95 9.2 11.95 8.7 9.55C8.55 8.75 9 8.05 9.7 7.7C9.9 7.6 10.05 7.7 10.2 7.85Z" fill="#0b0b0b"/></svg></a>
+        </div>
+
+      </div>
+
+      <div class="flex justify-center md:justify-end fade-in" style="animation-delay:.25s;">
+        <div class="relative w-52 h-52 sm:w-64 sm:h-64 md:w-80 md:h-80">
+          <div class="absolute inset-0 border border-purple-500/20 rounded-[28px] rotate-3"></div>
+          <img src="assets/aymen-photo.jpg" alt="Aymen mssd"
+            class="absolute inset-0 w-full h-full object-cover rounded-[28px] shadow-2xl border border-white/5 bg-zinc-900">
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="work" class="relative z-10 py-20 px-6 md:px-20 bg-[#030303] border-t border-white/5">
+    <div class="max-w-6xl mx-auto">
+
+      <div class="flex flex-col md:flex-row items-center justify-between mb-12 gap-8">
+        <div class="text-center md:text-left">
+          <h2 class="text-purple-500 text-[10px] font-extrabold tracking-[0.4em] uppercase mb-2">High-End Portfolio</h2>
+          <h3 class="text-2xl md:text-3xl font-extrabold">Professional Showcase</h3>
+          <p class="text-zinc-500 text-sm mt-2 max-w-lg">
+            Focused on ROI-driven content. Clean edits, professional pacing, and premium sound design for top-tier creators.
+          </p>
+        </div>
+
+        <div class="flex bg-zinc-900/80 p-1 rounded-2xl border border-white/5">
+          <button onclick="switchTab('shorts')" id="tab-shorts" class="tab-btn active">Short Form</button>
+          <button onclick="switchTab('long')" id="tab-long" class="tab-btn">Documentary/Long</button>
+        </div>
+      </div>
+
+      <div id="portfolio-container">
+
+        <!-- ===================== SHORTS + ARROWS ===================== -->
+        <div class="shorts-wrapper">
+          <button class="shorts-arrow left" onclick="scrollShorts(-1)" aria-label="Scroll left">
+            <svg viewBox="0 0 24 24"><path d="M15.5 19 8.5 12l7-7"/></svg>
+          </button>
+
+          <button class="shorts-arrow right" onclick="scrollShorts(1)" aria-label="Scroll right">
+            <svg viewBox="0 0 24 24"><path d="M8.5 5 15.5 12l-7 7"/></svg>
+          </button>
+
+          <div id="shorts-content" class="shorts-row transition-all duration-500">
+
+            <div class="video-item aspect-[9/16] short-card yt-short" data-video-id="H4OdO8aJJ3E">
+              <div class="skeleton"></div>
+              <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/H4OdO8aJJ3E/hqdefault.jpg')"></div>
+              <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
+            </div>
+
+            <div class="video-item aspect-[9/16] short-card yt-short" data-video-id="P0V0LJOEMaU">
+              <div class="skeleton"></div>
+              <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/P0V0LJOEMaU/hqdefault.jpg')"></div>
+              <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
+            </div>
+
+            <div class="video-item aspect-[9/16] short-card yt-short" data-video-id="VUyKrQgAOJo">
+              <div class="skeleton"></div>
+              <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/VUyKrQgAOJo/hqdefault.jpg')"></div>
+              <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
+            </div>
+
+            <div class="video-item aspect-[9/16] short-card yt-short" data-video-id="mxwmcJqIAwQ">
+              <div class="skeleton"></div>
+              <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/mxwmcJqIAwQ/hqdefault.jpg')"></div>
+              <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ===================== LONG FORM ===================== -->
+        <div id="long-content" class="hidden flex flex-col gap-10 md:gap-12 transition-all duration-500">
+
+          <div class="video-item aspect-video w-full max-w-5xl mx-auto long-wrap">
+            <div class="skeleton"></div>
+            <button class="mute-btn" data-muted="1" onclick="toggleMute(event)">
+              <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg>
+              <span>Muted</span>
+            </button>
+            <iframe class="js-long"
+              src="https://www.youtube.com/embed/blARl1F29sI?enablejsapi=1&rel=0&playsinline=1&mute=1&vq=hd1080"
+              allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          </div>
+
+          <div class="video-item aspect-video w-full max-w-5xl mx-auto long-wrap">
+            <div class="skeleton"></div>
+            <button class="mute-btn" data-muted="1" onclick="toggleMute(event)">
+              <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg>
+              <span>Muted</span>
+            </button>
+            <iframe class="js-long"
+              src="https://www.youtube.com/embed/0AD9KXuIuGE?enablejsapi=1&rel=0&playsinline=1&mute=1&vq=hd1080"
+              allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          </div>
+
+          <div class="video-item aspect-video w-full max-w-5xl mx-auto long-wrap">
+            <div class="skeleton"></div>
+            <button class="mute-btn" data-muted="1" onclick="toggleMute(event)">
+              <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg>
+              <span>Muted</span>
+            </button>
+            <iframe class="js-long"
+              src="https://www.youtube.com/embed/8X7TBZbk0h0?enablejsapi=1&rel=0&playsinline=1&mute=1&vq=hd1080"
+              allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          </div>
+
+          <div class="video-item aspect-video w-full max-w-5xl mx-auto long-wrap">
+            <div class="skeleton"></div>
+            <button class="mute-btn" data-muted="1" onclick="toggleMute(event)">
+              <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg>
+              <span>Muted</span>
+            </button>
+            <iframe class="js-long"
+              src="https://www.youtube.com/embed/P0V0LJOEMaU?enablejsapi=1&rel=0&playsinline=1&mute=1&vq=hd1080"
+              allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="relative z-10 py-20 px-6 md:px-20 border-t border-white/5">
+    <div class="max-w-6xl mx-auto">
+      <div class="bg-zinc-950 border border-white/5 rounded-3xl p-8 md:p-12">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+          <div>
+            <h4 class="text-2xl md:text-3xl font-extrabold">Ready to scale?</h4>
+            <p class="text-zinc-400 mt-2 max-w-xl">
+              I only work with serious creators who value quality and reliability. Let's discuss your project goals.
+            </p>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+            <a href="https://wa.me/213553667383" target="_blank" class="w-full md:w-auto text-center bg-[#8b5cf6] hover:bg-[#7c3aed] text-white px-7 py-3.5 rounded-2xl font-extrabold text-sm transition-all duration-300">WhatsApp Me</a>
+            <a href="mailto:aymenmessdz31@gmail.com" class="w-full md:w-auto text-center bg-zinc-900 hover:bg-zinc-800 text-white px-7 py-3.5 rounded-2xl font-extrabold text-sm transition-all duration-300 border border-white/5">Professional Email</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="py-12 text-center text-zinc-600 text-[10px] tracking-widest border-t border-white/5 uppercase">
+    &copy; 2026 Aymen mssd <span class="mx-2">|</span> High-Ticket Content Partner
+  </footer>
+
+  <!-- YouTube API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+
+  <script>
+    let players = [];
+    let observerLong = null;
+
+    // ==========================
+    // Helpers
+    // ==========================
+    function pauseAllVideos(exceptPlayer = null) {
+      players.forEach(p => {
+        try {
+          if (p && p.pauseVideo && p !== exceptPlayer) p.pauseVideo();
+        } catch(e){}
+      });
+    }
+
+    function buildYTPlayer(iframeEl, onReadyCb = null) {
+      if (!iframeEl.id) iframeEl.id = "player-" + Math.random().toString(16).slice(2);
+
+      const player = new YT.Player(iframeEl.id, {
+        events: {
+          onReady: (e) => {
+            // remove skeleton when ready
+            const wrap = iframeEl.closest(".video-item");
+            if (wrap) wrap.classList.add("hide-skeleton");
+            if (onReadyCb) onReadyCb(e);
+          },
+          onStateChange: (e) => {
+            if (e.data === YT.PlayerState.PLAYING) {
+              pauseAllVideos(e.target);
+            }
+          }
+        }
+      });
+
+      players.push(player);
+      return player;
+    }
+
+    // ==========================
+    // YouTube API Ready
+    // ==========================
+    function onYouTubeIframeAPIReady() {
+      initShortsClickToPlay();
+      initLongVideosAutoplay();
+      initVisibilityChangePause();
+      initScrollJumpFix();
+      initThumbSkeletonFix();
+    }
+
+    // ==========================
+    // Skeleton fix for thumbnails
+    // ==========================
+    function initThumbSkeletonFix(){
+      // remove skeleton when thumbnail loads (Shorts)
+      document.querySelectorAll(".yt-short").forEach(card => {
+        const thumb = card.querySelector(".yt-thumb");
+        if (!thumb) return;
+
+        // pre-load image
+        const bg = thumb.style.backgroundImage;
+        const url = bg.replace('url("','').replace('url(\'','').replace('")','').replace('\')','');
+
+        const img = new Image();
+        img.onload = () => card.classList.add("hide-skeleton");
+        img.src = url;
+      });
+    }
+
+    // ==========================
+    // Shorts: click-to-play + thumbnail
+    // ==========================
+    function initShortsClickToPlay() {
+      document.querySelectorAll(".yt-short").forEach((card) => {
+        const videoId = card.getAttribute("data-video-id");
+
+        function startShort() {
+          pauseAllVideos();
+
+          card.innerHTML = `
+            <div class="skeleton"></div>
+            <iframe
+              class="js-short"
+              src="https://www.youtube.com/embed/${videoId}?enablejsapi=1&playsinline=1&rel=0&autoplay=1&mute=0&vq=hd1080"
+              allow="autoplay; encrypted-media"
+              allowfullscreen
+            ></iframe>
+          `;
+
+          const iframe = card.querySelector("iframe");
+          const player = buildYTPlayer(iframe, () => {
+            try { player.setPlaybackQuality("hd1080"); } catch(e){}
+          });
+
+          setTimeout(() => {
+            try { player.playVideo(); } catch(e){}
+          }, 150);
+        }
+
+        card.addEventListener("click", () => {
+          if (card.querySelector("iframe")) return;
+          startShort();
+        });
+
+        card.setAttribute("tabindex", "0");
+        card.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            if (card.querySelector("iframe")) return;
+            startShort();
+          }
+        });
+      });
+    }
+
+    // ==========================
+    // Long videos: autoplay intelligent on scroll
+    // ==========================
+    function initLongVideosAutoplay() {
+      document.querySelectorAll(".js-long").forEach((iframe) => {
+        const player = buildYTPlayer(iframe, () => {
+          try { player.setPlaybackQuality("hd1080"); } catch(e){}
+        });
+      });
+
+      observerLong = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const iframe = entry.target;
+
+          const player = players.find(p => {
+            try { return p.getIframe() === iframe; } catch(e){ return false; }
+          });
+
+          if (!player) return;
+
+          if (entry.isIntersecting) {
+            try {
+              pauseAllVideos(player);
+              player.mute();
+              player.playVideo();
+              player.setPlaybackQuality("hd1080");
+            } catch(e){}
+          } else {
+            try { player.pauseVideo(); } catch(e){}
+          }
+        });
+      }, {
+        threshold: 0.5
+      });
+
+      document.querySelectorAll(".js-long").forEach(iframe => observerLong.observe(iframe));
+    }
+
+    // ==========================
+    // Tabs
+    // ==========================
+    function switchTab(type) {
+      const shorts = document.getElementById('shorts-content');
+      const long = document.getElementById('long-content');
+      const tabS = document.getElementById('tab-shorts');
+      const tabL = document.getElementById('tab-long');
+
+      pauseAllVideos();
+
+      if (type === 'shorts') {
+        shorts.classList.remove('hidden');
+        long.classList.add('hidden');
+        tabS.classList.add('active');
+        tabL.classList.remove('active');
+      } else {
+        long.classList.remove('hidden');
+        shorts.classList.add('hidden');
+        tabL.classList.add('active');
+        tabS.classList.remove('active');
+      }
+
+      setTimeout(() => {
+        window.dispatchEvent(new Event("scroll"));
+      }, 100);
+    }
+
+    function scrollToWork() {
+      const element = document.getElementById('work');
+      window.scrollTo({
+        top: (element.getBoundingClientRect().top + window.scrollY) - 20,
+        behavior: 'smooth'
+      });
+    }
+
+    // ==========================
+    // Shorts arrows scroll
+    // ==========================
+    function scrollShorts(direction){
+      const row = document.getElementById("shorts-content");
+      if(!row) return;
+
+      // scroll by one card
+      const card = row.querySelector(".short-card");
+      if(!card) return;
+
+      const w = card.getBoundingClientRect().width + 16;
+      row.scrollBy({ left: direction * w, behavior: "smooth" });
+    }
+
+    // ==========================
+    // Mute/Unmute button for Long
+    // ==========================
+    function toggleMute(event){
+      event.preventDefault();
+      event.stopPropagation();
+
+      const btn = event.currentTarget;
+      const wrap = btn.closest(".video-item");
+      const iframe = wrap.querySelector("iframe");
+
+      const player = players.find(p => {
+        try { return p.getIframe() === iframe; } catch(e){ return false; }
+      });
+
+      if(!player) return;
+
+      const muted = btn.getAttribute("data-muted") === "1";
+
+      if(muted){
+        try { player.unMute(); } catch(e){}
+        btn.setAttribute("data-muted","0");
+        btn.querySelector("span").textContent = "Sound";
+      }else{
+        try { player.mute(); } catch(e){}
+        btn.setAttribute("data-muted","1");
+        btn.querySelector("span").textContent = "Muted";
+      }
+    }
+
+    // ==========================
+    // Auto pause when changing browser tab
+    // ==========================
+    function initVisibilityChangePause() {
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) pauseAllVideos();
+      });
+
+      window.addEventListener("blur", () => {
+        pauseAllVideos();
+      });
+    }
+
+    // ==========================
+    // Fix: prevent small scroll jump when clicking play inside iframe
+    // ==========================
+    function initScrollJumpFix() {
+      document.addEventListener("click", (e) => {
+        const iframe = e.target.closest("iframe");
+        if (!iframe) return;
+
+        const y = window.scrollY;
+        setTimeout(() => window.scrollTo({ top: y }), 0);
+      });
+    }
+  </script>
+</body>
+</html>
