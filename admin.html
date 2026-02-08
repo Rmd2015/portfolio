@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard | Portfolio</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{ --accent:#8b5cf6; }
+
+    body{
+      font-family:'Plus Jakarta Sans',sans-serif;
+      background: radial-gradient(circle at 20% 10%, rgba(139,92,246,0.18) 0%, transparent 45%),
+        radial-gradient(circle at 80% 80%, rgba(168,85,247,0.12) 0%, transparent 55%),
+        linear-gradient(135deg,#0f001a 0%,#050014 50%,#0a001f 100%);
+      min-height:100vh;
+      color:#fff;
+    }
+
+    .admin-wrap{
+      background: rgba(10,10,10,0.65);
+      border: 1px solid rgba(255,255,255,0.06);
+      backdrop-filter: blur(14px);
+      border-radius: 24px;
+      padding: 18px;
+    }
+
+    .admin-input,.admin-select{
+      width:100%;
+      background:#070707;
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:16px;
+      padding:12px 14px;
+      color:#fff;
+      outline:none;
+      transition:all .2s ease;
+      font-weight:700;
+      font-size:14px;
+    }
+    .admin-input:focus,.admin-select:focus{
+      border-color: rgba(139,92,246,0.65);
+      box-shadow: 0 0 0 3px rgba(139,92,246,0.16);
+    }
+
+    .admin-label{
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 8px;
+      display:block;
+    }
+
+    .btn-pro{
+      border-radius: 16px;
+      padding: 12px 16px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: .02em;
+      transition: all .2s ease;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      color: white;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      user-select:none;
+    }
+    .btn-pro:hover{
+      transform: translateY(-1px);
+      border-color: rgba(139,92,246,0.55);
+      background: rgba(139,92,246,0.12);
+    }
+    .btn-pro:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+      transform:none;
+    }
+
+    .btn-primary{
+      background: var(--accent);
+      border-color: rgba(139,92,246,0.7);
+      box-shadow:0 18px 40px rgba(139,92,246,0.14);
+    }
+    .btn-primary:hover{ background:#7c3aed;border-color:#7c3aed; }
+
+    .btn-danger{
+      background: rgba(239,68,68,0.12);
+      border-color: rgba(239,68,68,0.25);
+    }
+    .btn-danger:hover{
+      background: rgba(239,68,68,0.18);
+      border-color: rgba(239,68,68,0.5);
+    }
+
+    .btn-neutral{
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.10);
+    }
+    .btn-neutral:hover{
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.18);
+    }
+
+    .admin-item{
+      border:1px solid rgba(255,255,255,0.06);
+      background: rgba(0,0,0,0.35);
+      border-radius: 20px;
+      padding: 14px;
+    }
+
+    .admin-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(139,92,246,0.10);
+      border:1px solid rgba(139,92,246,0.18);
+      color:#ddd;
+      font-size:12px;
+      font-weight:900;
+    }
+
+    .inline-edit{
+      margin-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding-top: 12px;
+      display:grid;
+      gap: 10px;
+    }
+
+    .thumb{
+      width: 160px;
+      height: 90px;
+      border-radius: 16px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      flex: 0 0 auto;
+      position: relative;
+    }
+
+    .thumb img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+      transform: scale(1.01);
+    }
+
+    .thumb::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(to top, rgba(0,0,0,0.55), transparent 60%);
+      pointer-events:none;
+    }
+
+    .hidden{display:none!important;}
+  </style>
+</head>
+
+<body class="p-6 md:p-10">
+  <div class="max-w-6xl mx-auto space-y-6">
+
+    <!-- HEADER -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <div class="text-purple-400 text-[10px] font-extrabold tracking-[0.35em] uppercase">
+          Admin Dashboard
+        </div>
+        <h1 class="text-3xl md:text-4xl font-extrabold mt-2">Manage Portfolio Videos</h1>
+        <p class="text-zinc-400 mt-2">
+          Toutes les actions sont synchronisées en temps réel avec <b>index.html</b>.
+        </p>
+      </div>
+
+      <div class="flex gap-3">
+        <a href="index.html" class="btn-pro btn-neutral">Open Portfolio</a>
+        <button onclick="logout()" class="btn-pro btn-neutral">Logout</button>
+      </div>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="loginBox" class="admin-wrap max-w-md">
+      <h2 class="text-xl font-extrabold">Admin Login</h2>
+      <p class="text-zinc-400 text-sm mt-1">Accès réservé</p>
+
+      <div class="mt-4 space-y-3">
+        <input id="pw" type="password" class="admin-input" placeholder="Mot de passe" />
+        <button class="btn-pro btn-primary w-full" onclick="login()">Se connecter</button>
+      </div>
+    </div>
+
+    <!-- DASH -->
+    <div id="dash" class="hidden space-y-6">
+
+      <!-- ADD -->
+      <div class="admin-wrap">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-extrabold">Add Video</h2>
+            <p class="text-zinc-400 text-sm mt-1">YouTube ID + category + option + title.</p>
+          </div>
+          <p id="status" class="text-xs text-zinc-400"></p>
+        </div>
+
+        <div class="grid md:grid-cols-4 gap-4 mt-6">
+          <div>
+            <label class="admin-label">Title</label>
+            <input id="add-title" class="admin-input" placeholder="Example: Real Estate Hook Edit" />
+          </div>
+
+          <div>
+            <label class="admin-label">YouTube Video ID</label>
+            <input id="add-youtube" class="admin-input" placeholder="Example: z6JMaEGuCjY" />
+          </div>
+
+          <div>
+            <label class="admin-label">Category</label>
+            <select id="add-category" class="admin-select" onchange="syncOptionsForAdd()">
+              <option value="shorts">Short Form</option>
+              <option value="long">Long Form</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="admin-label">Option</label>
+            <select id="add-option" class="admin-select"></select>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3 mt-4">
+          <button class="btn-pro btn-primary w-full sm:w-auto" onclick="addVideo()">+ Add Video</button>
+          <button class="btn-pro btn-neutral w-full sm:w-auto" onclick="refreshVideos()">Refresh</button>
+        </div>
+      </div>
+
+      <!-- LIST -->
+      <div class="admin-wrap">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-extrabold">Current Videos</h2>
+            <p class="text-zinc-400 text-sm mt-1">Order is controlled by <b>position</b>.</p>
+          </div>
+          <p id="count" class="text-xs text-zinc-400"></p>
+        </div>
+
+        <div id="admin-list" class="mt-6 grid gap-4"></div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+  /* ============================================================
+    1) SUPABASE CONFIG
+  ============================================================ */
+  const SUPABASE_URL = "https://ajubgliywevrwafnhdyv.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_iuCPHxztz0y9pgbQT5m1UQ_asgQAb7f";
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  /* ============================================================
+    2) CATEGORIES + OPTIONS
+  ============================================================ */
+  const CATEGORY_OPTIONS = {
+    shorts: [
+      { value: "short-talking", label: "Short – Talking Head", badge: "Talking Head" },
+      { value: "short-realestate", label: "Short – Real Estate", badge: "Real Estate" },
+    ],
+    long: [
+      { value: "long-talking", label: "Long – Talking Head", badge: "Talking Head" },
+      { value: "long-documentary", label: "Long – Documentary", badge: "Documentary" },
+    ]
+  };
+
+  function getBadgeText(category, option){
+    const opt = CATEGORY_OPTIONS[category]?.find(o => o.value === option);
+    return opt?.badge || "Video";
+  }
+
+  /* ============================================================
+    3) YOUTUBE THUMBNAIL HELPERS (NEW)
+  ============================================================ */
+  function getYoutubeThumb(youtubeId){
+    // 1) maxresdefault (best)
+    // 2) hqdefault (fallback)
+    return {
+      max: `https://i.ytimg.com/vi/${youtubeId}/maxresdefault.jpg`,
+      hq: `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`
+    };
+  }
+
+  function onThumbError(imgEl, youtubeId){
+    const thumbs = getYoutubeThumb(youtubeId);
+
+    // si maxres échoue -> hq
+    if(imgEl.dataset.fallback !== "1"){
+      imgEl.dataset.fallback = "1";
+      imgEl.src = thumbs.hq;
+      return;
+    }
+
+    // si hq échoue -> image vide
+    imgEl.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='180'%3E%3Crect width='100%25' height='100%25' fill='%23101010'/%3E%3Ctext x='50%25' y='50%25' fill='%23ffffff66' font-size='16' font-family='Arial' text-anchor='middle' dominant-baseline='middle'%3EThumbnail unavailable%3C/text%3E%3C/svg%3E";
+  }
+
+  /* ============================================================
+    4) LOGIN (simple)
+  ============================================================ */
+  const ADMIN_PASSWORD = "Qy,enPort2015";
+
+  function login(){
+    const pw = document.getElementById("pw").value;
+    if(pw !== ADMIN_PASSWORD){
+      alert("Mot de passe incorrect !");
+      return;
+    }
+    localStorage.setItem("admin_ok", "true");
+    showDash();
+  }
+
+  function logout(){
+    localStorage.removeItem("admin_ok");
+    location.reload();
+  }
+
+  function showDash(){
+    document.getElementById("loginBox").classList.add("hidden");
+    document.getElementById("dash").classList.remove("hidden");
+    syncOptionsForAdd();
+    refreshVideos();
+    initRealtime();
+  }
+
+  if(localStorage.getItem("admin_ok") === "true"){
+    showDash();
+  }
+
+  /* ============================================================
+    5) REALTIME (optional in admin)
+  ============================================================ */
+  function initRealtime(){
+    supabaseClient
+      .channel("videos-live-admin")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "videos" },
+        () => refreshVideos()
+      )
+      .subscribe();
+  }
+
+  /* ============================================================
+    6) LOAD
+  ============================================================ */
+  let videos = [];
+
+  async function refreshVideos(){
+    document.getElementById("status").textContent = "Loading...";
+
+    const { data, error } = await supabaseClient
+      .from("videos")
+      .select("*")
+      .order("position", { ascending: true })
+      .order("created_at", { ascending: false });
+
+    if(error){
+      console.error(error);
+      document.getElementById("status").textContent = "Supabase error: " + error.message;
+      return;
+    }
+
+    videos = data || [];
+    document.getElementById("count").textContent = `${videos.length} video(s)`;
+    document.getElementById("status").textContent = "Synced ✔";
+    renderAdminList();
+  }
+
+  /* ============================================================
+    7) RENDER ADMIN LIST (UPDATED WITH THUMBNAILS)
+  ============================================================ */
+  function renderAdminList(){
+    const wrap = document.getElementById("admin-list");
+    wrap.innerHTML = "";
+
+    videos.forEach((v, index) => {
+      const card = document.createElement("div");
+      card.className = "admin-item";
+
+      const disabledUp = index === 0;
+      const disabledDown = index === videos.length - 1;
+
+      const thumbs = getYoutubeThumb(v.youtube_id);
+
+      card.innerHTML = `
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+
+          <!-- LEFT: THUMB + INFO -->
+          <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+
+            <div class="thumb">
+              <img
+                src="${thumbs.max}"
+                alt="Thumbnail"
+                loading="lazy"
+                onerror="onThumbError(this,'${escapeAttr(v.youtube_id)}')"
+              />
+            </div>
+
+            <div class="space-y-2">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="admin-pill">${v.category.toUpperCase()}</span>
+                <span class="admin-pill">${getBadgeText(v.category, v.option)}</span>
+                <span class="admin-pill">pos: ${v.position ?? 0}</span>
+                <span class="admin-pill">ID: ${escapeHtml(v.youtube_id)}</span>
+              </div>
+
+              <div class="text-white font-extrabold text-lg leading-tight">
+                ${escapeHtml(v.title || "Untitled")}
+              </div>
+
+              <a
+                href="https://www.youtube.com/watch?v=${encodeURIComponent(v.youtube_id)}"
+                target="_blank"
+                class="text-sm text-purple-300 hover:text-purple-200 font-bold"
+              >
+                Preview on YouTube →
+              </a>
+            </div>
+          </div>
+
+          <!-- RIGHT: ACTIONS -->
+          <div class="flex flex-col sm:flex-row gap-2">
+            <button class="btn-pro btn-neutral" onclick="moveUp(${v.id})" ${disabledUp ? "disabled" : ""}>↑</button>
+            <button class="btn-pro btn-neutral" onclick="moveDown(${v.id})" ${disabledDown ? "disabled" : ""}>↓</button>
+            <button class="btn-pro btn-neutral" onclick="toggleEdit(${v.id})">Modifier</button>
+            <button class="btn-pro btn-danger" onclick="deleteVideo(${v.id})">Supprimer</button>
+          </div>
+        </div>
+
+        <div id="edit-${v.id}" class="inline-edit hidden">
+          <div class="grid md:grid-cols-4 gap-3">
+            <div>
+              <label class="admin-label">Title</label>
+              <input id="edit-title-${v.id}" class="admin-input" value="${escapeAttr(v.title)}" />
+            </div>
+
+            <div>
+              <label class="admin-label">YouTube ID</label>
+              <input id="edit-youtube-${v.id}" class="admin-input" value="${escapeAttr(v.youtube_id)}" />
+            </div>
+
+            <div>
+              <label class="admin-label">Category</label>
+              <select id="edit-category-${v.id}" class="admin-select" onchange="syncOptionsForEdit(${v.id})">
+                <option value="shorts" ${v.category === "shorts" ? "selected" : ""}>Short Form</option>
+                <option value="long" ${v.category === "long" ? "selected" : ""}>Long Form</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="admin-label">Option</label>
+              <select id="edit-option-${v.id}" class="admin-select"></select>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3">
+            <button class="btn-pro btn-primary w-full sm:w-auto" onclick="saveEdit(${v.id})">Save</button>
+            <button class="btn-pro btn-neutral w-full sm:w-auto" onclick="toggleEdit(${v.id})">Cancel</button>
+          </div>
+        </div>
+      `;
+
+      wrap.appendChild(card);
+      syncOptionsForEdit(v.id, true);
+    });
+  }
+
+  /* ============================================================
+    8) OPTIONS SYNC
+  ============================================================ */
+  function syncOptionsForAdd(){
+    const cat = document.getElementById("add-category").value;
+    const optSelect = document.getElementById("add-option");
+    optSelect.innerHTML = "";
+
+    CATEGORY_OPTIONS[cat].forEach(o => {
+      const op = document.createElement("option");
+      op.value = o.value;
+      op.textContent = o.label;
+      optSelect.appendChild(op);
+    });
+  }
+
+  function syncOptionsForEdit(id){
+    const catSelect = document.getElementById(`edit-category-${id}`);
+    const optSelect = document.getElementById(`edit-option-${id}`);
+    if(!catSelect || !optSelect) return;
+
+    const cat = catSelect.value;
+    const current = videos.find(v => v.id === id);
+
+    optSelect.innerHTML = "";
+    CATEGORY_OPTIONS[cat].forEach(o => {
+      const op = document.createElement("option");
+      op.value = o.value;
+      op.textContent = o.label;
+      optSelect.appendChild(op);
+    });
+
+    const exists = CATEGORY_OPTIONS[cat].some(o => o.value === current.option);
+    optSelect.value = exists ? current.option : CATEGORY_OPTIONS[cat][0].value;
+  }
+
+  /* ============================================================
+    9) CRUD
+  ============================================================ */
+  async function addVideo(){
+    const title = document.getElementById("add-title").value.trim();
+    const youtube_id = document.getElementById("add-youtube").value.trim();
+    const category = document.getElementById("add-category").value;
+    const option = document.getElementById("add-option").value;
+
+    if(!youtube_id){
+      alert("YouTube ID required.");
+      return;
+    }
+
+    if(!/^[a-zA-Z0-9_-]{6,20}$/.test(youtube_id)){
+      alert("Invalid YouTube ID.");
+      return;
+    }
+
+    const maxPos = videos.length ? (videos[videos.length - 1].position ?? videos.length) : 0;
+    const nextPos = maxPos + 1;
+
+    const { error } = await supabaseClient
+      .from("videos")
+      .insert([{
+        youtube_id,
+        title: title || null,
+        category,
+        option,
+        position: nextPos
+      }]);
+
+    if(error){
+      alert("Supabase error: " + error.message);
+      console.error(error);
+      return;
+    }
+
+    document.getElementById("add-title").value = "";
+    document.getElementById("add-youtube").value = "";
+    refreshVideos();
+  }
+
+  async function deleteVideo(id){
+    if(!confirm("Supprimer cette vidéo ?")) return;
+
+    const { error } = await supabaseClient
+      .from("videos")
+      .delete()
+      .eq("id", id);
+
+    if(error){
+      alert("Supabase error: " + error.message);
+      console.error(error);
+      return;
+    }
+
+    await normalizePositions();
+    refreshVideos();
+  }
+
+  function toggleEdit(id){
+    const el = document.getElementById(`edit-${id}`);
+    if(!el) return;
+    el.classList.toggle("hidden");
+    syncOptionsForEdit(id);
+  }
+
+  async function saveEdit(id){
+    const title = document.getElementById(`edit-title-${id}`).value.trim();
+    const youtube_id = document.getElementById(`edit-youtube-${id}`).value.trim();
+    const category = document.getElementById(`edit-category-${id}`).value;
+    const option = document.getElementById(`edit-option-${id}`).value;
+
+    if(!youtube_id){
+      alert("YouTube ID required.");
+      return;
+    }
+
+    if(!/^[a-zA-Z0-9_-]{6,20}$/.test(youtube_id)){
+      alert("Invalid YouTube ID.");
+      return;
+    }
+
+    const { error } = await supabaseClient
+      .from("videos")
+      .update({
+        title: title || null,
+        youtube_id,
+        category,
+        option
+      })
+      .eq("id", id);
+
+    if(error){
+      alert("Supabase error: " + error.message);
+      console.error(error);
+      return;
+    }
+
+    toggleEdit(id);
+    refreshVideos();
+  }
+
+  /* ============================================================
+    10) ORDER (↑ ↓)
+  ============================================================ */
+  async function moveUp(id){ await swapWithNeighbor(id, -1); }
+  async function moveDown(id){ await swapWithNeighbor(id, +1); }
+
+  async function swapWithNeighbor(id, direction){
+    const index = videos.findIndex(v => v.id === id);
+    if(index === -1) return;
+
+    const neighborIndex = index + direction;
+    if(neighborIndex < 0 || neighborIndex >= videos.length) return;
+
+    const current = videos[index];
+    const neighbor = videos[neighborIndex];
+
+    const posA = current.position ?? index + 1;
+    const posB = neighbor.position ?? neighborIndex + 1;
+
+    const { error: e1 } = await supabaseClient.from("videos").update({ position: posB }).eq("id", current.id);
+    const { error: e2 } = await supabaseClient.from("videos").update({ position: posA }).eq("id", neighbor.id);
+
+    if(e1 || e2){
+      console.error(e1 || e2);
+      alert("Error swapping positions.");
+      return;
+    }
+
+    refreshVideos();
+  }
+
+  async function normalizePositions(){
+    const { data, error } = await supabaseClient
+      .from("videos")
+      .select("*")
+      .order("position", { ascending: true });
+
+    if(error) return;
+
+    for(let i=0;i<data.length;i++){
+      const v = data[i];
+      const wanted = i + 1;
+      if(v.position !== wanted){
+        await supabaseClient.from("videos").update({ position: wanted }).eq("id", v.id);
+      }
+    }
+  }
+
+  /* ============================================================
+    11) ESCAPERS
+  ============================================================ */
+  function escapeHtml(str){
+    return String(str || "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;");
+  }
+  function escapeAttr(str){
+    return String(str || "")
+      .replaceAll("&","&amp;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;");
+  }
+</script>
+</body>
+</html>
