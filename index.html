@@ -6,337 +6,132 @@
   <title>Aymen mssd | High-Ticket Video Content Partner</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
 
   <style>
-    :root {
-      --accent: #8b5cf6;
-      --bg: #000;
-      --card: #0a0a0a;
-    }
+    :root { --accent:#8b5cf6; --bg:#000; --card:#0a0a0a; }
 
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      color: #fff;
-      scroll-behavior: smooth;
-      background: radial-gradient(
-          ellipse at 10% 20%,
-          rgba(139, 92, 246, 0.18) 0%,
-          transparent 40%
-        ),
-        radial-gradient(
-          ellipse at 80% 70%,
-          rgba(168, 85, 247, 0.14) 0%,
-          transparent 50%
-        ),
-        radial-gradient(
-          circle at 30% 80%,
-          rgba(124, 58, 237, 0.11) 0%,
-          transparent 45%
-        ),
-        linear-gradient(
-          135deg,
-          #0f001a 0%,
-          #050014 50%,
-          #0a001f 100%
-        );
-      background-attachment: fixed;
-      min-height: 100vh;
-    }
-
-    .glow-bg {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: -2;
-      background:
-        radial-gradient(circle at 30% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 70% 80%, rgba(168, 85, 247, 0.06) 0%, transparent 60%);
-      opacity: 0.9;
-    }
-
-    .hidden { display: none !important; }
-
-    ::-webkit-scrollbar { height:6px; width:6px; }
-    ::-webkit-scrollbar-track { background:#000; }
-    ::-webkit-scrollbar-thumb { background:#222; border-radius:10px; }
-    ::-webkit-scrollbar-thumb:hover { background:var(--accent); }
-
-    .video-item {
-      background: var(--card);
-      border-radius: 16px;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.06);
-      transition: all .35s ease;
-      position: relative;
-    }
-
-    .video-item:hover {
-      border-color: rgba(139,92,246,0.8);
-      transform: translateY(-4px);
-    }
-
-    .video-item.active-video {
-      border-color: var(--accent) !important;
-      box-shadow: 0 0 0 3px rgba(139,92,246,0.4);
-      transition: all 0.4s ease;
-    }
-
-    iframe { width:100%; height:100%; border:0; }
-
-    .tab-btn {
-      padding:9px 18px;
-      border-radius:14px;
-      font-size:12px;
-      font-weight:800;
-      color:#71717a;
-      transition:all .25s ease;
-      white-space:nowrap;
-    }
-
-    .tab-btn.active {
-      background:var(--accent);
+    body{
+      font-family:'Plus Jakarta Sans',sans-serif;
       color:#fff;
-      box-shadow:0 10px 30px rgba(139,92,246,0.18);
+      scroll-behavior:smooth;
+      background: radial-gradient(ellipse at 10% 20%, rgba(139,92,246,0.18) 0%, transparent 40%),
+        radial-gradient(ellipse at 80% 70%, rgba(168,85,247,0.14) 0%, transparent 50%),
+        radial-gradient(circle at 30% 80%, rgba(124,58,237,0.11) 0%, transparent 45%),
+        linear-gradient(135deg,#0f001a 0%,#050014 50%,#0a001f 100%);
+      background-attachment:fixed;
+      min-height:100vh;
     }
 
-    .fade-in {
-      animation:fadeIn .8s ease forwards;
-      opacity:0;
-      transform:translateY(10px);
+    .glow-bg{
+      position:fixed; inset:0; pointer-events:none; z-index:-2;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(139,92,246,0.08) 0%, transparent 50%),
+        radial-gradient(circle at 70% 80%, rgba(168,85,247,0.06) 0%, transparent 60%);
+      opacity:.9;
     }
 
-    @keyframes fadeIn {
-      to { opacity:1; transform:translateY(0); }
-    }
+    .hidden{display:none!important;}
 
-    .social-btn {
-      width:52px;
-      height:52px;
-      border-radius:999px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:#0b0b0b;
+    ::-webkit-scrollbar{height:6px;width:6px;}
+    ::-webkit-scrollbar-track{background:#000;}
+    ::-webkit-scrollbar-thumb{background:#222;border-radius:10px;}
+    ::-webkit-scrollbar-thumb:hover{background:var(--accent);}
+
+    .video-item{
+      background:var(--card);
+      border-radius:16px;
+      overflow:hidden;
       border:1px solid rgba(255,255,255,0.06);
-      transition:all .25s ease;
-    }
-
-    .social-btn:hover {
-      border-color:rgba(139,92,246,0.55);
-      transform:translateY(-2px);
-    }
-
-    .social-btn svg { width:22px; height:22px; opacity:.95; }
-
-    /* SUBTABS */
-    .subtab-btn {
-      padding: 8px 16px;
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 700;
-      background: #111;
-      color: #aaa;
-      border: 1px solid #222;
-      transition: all 0.25s;
-    }
-
-    .subtab-btn.active {
-      background: var(--accent);
-      color: white;
-      border-color: var(--accent);
-    }
-
-    /* LONG GRID */
-    .long-grid {
-      display: grid;
-      grid-template-columns: repeat(1, minmax(0, 1fr));
-      gap: 18px;
-    }
-
-    @media (min-width: 768px) {
-      .long-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 22px;
-      }
-    }
-
-    @media (min-width: 768px) {
-      .long-grid > .video-item:last-child:nth-child(odd) {
-        grid-column: 1 / -1;
-      }
-    }
-
-    /* ✅ SHORTS GRID PRO */
-    .shorts-grid-wrapper{
-      max-height: calc((100vw / 4) * (16/9) * 2 + 24px);
-      /* fallback: sera recalculé en JS */
-      overflow-y: auto;
-      padding-right: 2px;
-    }
-
-    /* Le grid */
-    .shorts-grid {
-      display: grid;
-      gap: 16px;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    @media (min-width: 640px) {
-      .shorts-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-    }
-
-    @media (min-width: 1024px) {
-      .shorts-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-      }
-    }
-
-    /* 🔥 IMPORTANT: shorts doivent remplir la ligne même si 1/2/3 */
-    .shorts-grid > .video-item{
-      width:100%;
-    }
-
-    /* Preview */
-    .yt-thumb {
-      width:100%;
-      height:100%;
-      position:absolute;
-      inset:0;
-      background-size:cover;
-      background-position:center;
+      transition:all .35s ease;
+      position:relative;
       cursor:pointer;
-      z-index: 1;
+    }
+    .video-item:hover{border-color:rgba(139,92,246,0.8); transform:translateY(-4px);}
+    iframe{width:100%;height:100%;border:0;}
+
+    .tab-btn{
+      padding:9px 18px;border-radius:14px;font-size:12px;font-weight:800;
+      color:#71717a;transition:all .25s ease;white-space:nowrap;
+    }
+    .tab-btn.active{
+      background:var(--accent);color:#fff;box-shadow:0 10px 30px rgba(139,92,246,0.18);
     }
 
-    .yt-thumb::after {
-      content:"";
-      position:absolute;
-      inset:0;
+    .fade-in{animation:fadeIn .8s ease forwards;opacity:0;transform:translateY(10px);}
+    @keyframes fadeIn{to{opacity:1;transform:translateY(0);}}
+
+    .social-btn{
+      width:52px;height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center;
+      background:#0b0b0b;border:1px solid rgba(255,255,255,0.06);transition:all .25s ease;
+    }
+    .social-btn:hover{border-color:rgba(139,92,246,0.55);transform:translateY(-2px);}
+    .social-btn svg{width:22px;height:22px;opacity:.95;}
+
+    .subtab-btn{
+      padding:8px 16px;border-radius:12px;font-size:13px;font-weight:700;
+      background:#111;color:#aaa;border:1px solid #222;transition:all .25s;
+    }
+    .subtab-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+
+    .long-grid{display:grid;grid-template-columns:repeat(1,minmax(0,1fr));gap:18px;}
+    @media (min-width:768px){.long-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;}}
+    @media (min-width:768px){.long-grid>.video-item:last-child:nth-child(odd){grid-column:1/-1;}}
+
+    .shorts-grid-wrapper{max-height: calc((100vw / 4) * (16/9) * 2 + 24px);overflow-y:auto;padding-right:2px;}
+    .shorts-grid{display:grid;gap:16px;grid-template-columns:repeat(2,minmax(0,1fr));}
+    @media (min-width:640px){.shorts-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+    @media (min-width:1024px){.shorts-grid{grid-template-columns:repeat(4,minmax(0,1fr));}}
+
+    .yt-thumb{
+      width:100%;height:100%;position:absolute;inset:0;background-size:cover;background-position:center;
+      cursor:pointer;z-index:1;
+    }
+    .yt-thumb::after{
+      content:"";position:absolute;inset:0;
       background:linear-gradient(to top, rgba(0,0,0,0.45), rgba(0,0,0,0.05));
-      z-index: 1;
+      z-index:1;
     }
 
-    .play-btn {
-      position:absolute;
-      inset:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      z-index:5;
-      pointer-events:none;
+    .play-btn{
+      position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+      z-index:5;pointer-events:none;
     }
-
-    .play-btn span {
-      width:64px;
-      height:64px;
-      border-radius:999px;
-      background:rgba(0,0,0,0.55);
+    .play-btn span{
+      width:64px;height:64px;border-radius:999px;background:rgba(0,0,0,0.55);
       border:1px solid rgba(255,255,255,0.12);
-      display:flex;
-      align-items:center;
-      justify-content:center;
+      display:flex;align-items:center;justify-content:center;
       backdrop-filter: blur(6px);
       transition:transform .2s ease;
-      z-index: 2;
+      z-index:2;
     }
+    .video-item:hover .play-btn span{transform:scale(1.05);}
+    .play-btn svg{width:26px;height:26px;margin-left:3px;fill:white;opacity:.95;}
 
-    .video-item:hover .play-btn span {
-      transform:scale(1.05);
-    }
-
-    .play-btn svg {
-      width:26px;
-      height:26px;
-      margin-left:3px;
-      fill:white;
-      opacity:.95;
-    }
-
-    /* Skeleton */
-    .skeleton {
-      position:absolute;
-      inset:0;
-      background:linear-gradient(90deg, #0b0b0b 0%, #141414 45%, #0b0b0b 100%);
+    .skeleton{
+      position:absolute;inset:0;
+      background:linear-gradient(90deg,#0b0b0b 0%,#141414 45%,#0b0b0b 100%);
       background-size:200% 100%;
       animation: shimmer 1.3s infinite linear;
       z-index:3;
     }
+    @keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
 
-    @keyframes shimmer {
-      0%{ background-position: 200% 0; }
-      100%{ background-position: -200% 0; }
+    .mute-btn{
+      position:absolute;top:14px;right:14px;z-index:50;padding:10px 12px;border-radius:14px;
+      background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.08);
+      display:flex;align-items:center;gap:8px;font-size:12px;font-weight:900;letter-spacing:.04em;
+      text-transform:uppercase;transition:all .2s ease;backdrop-filter: blur(10px);
     }
+    .mute-btn:hover{border-color:rgba(139,92,246,0.6);transform:scale(1.02);}
+    .mute-btn svg{width:18px;height:18px;fill:white;opacity:.95;}
 
-    /* Mute btn */
-    .mute-btn {
-      position:absolute;
-      top:14px;
-      right:14px;
-      z-index:50;
-      padding:10px 12px;
-      border-radius:14px;
-      background:rgba(0,0,0,0.6);
-      border:1px solid rgba(255,255,255,0.08);
-      display:flex;
-      align-items:center;
-      gap:8px;
-      font-size:12px;
-      font-weight:900;
-      letter-spacing:.04em;
-      text-transform:uppercase;
-      transition:all .2s ease;
-      backdrop-filter: blur(10px);
-    }
-
-    .mute-btn:hover {
-      border-color:rgba(139,92,246,0.6);
-      transform:scale(1.02);
-    }
-
-    .mute-btn svg {
-      width:18px;
-      height:18px;
-      fill:white;
-      opacity:.95;
-    }
-
-    /* Long preview badge */
-    .badge-long{
-      position:absolute;
-      left:14px;
-      top:14px;
-      z-index:50;
-      padding:8px 10px;
-      border-radius:999px;
-      background:rgba(0,0,0,0.55);
-      border:1px solid rgba(255,255,255,0.08);
-      font-size:11px;
-      font-weight:900;
-      letter-spacing:.04em;
-      text-transform:uppercase;
-      backdrop-filter: blur(10px);
-      color:#fff;
-      opacity:.95;
-    }
-      .badge-short{
-      position:absolute;
-      left:14px;
-      top:14px;
-      z-index:50;
-      padding:8px 10px;
-      border-radius:999px;
-      background:rgba(0,0,0,0.55);
-      border:1px solid rgba(255,255,255,0.08);
-      font-size:11px;
-      font-weight:900;
-      letter-spacing:.04em;
-      text-transform:uppercase;
-      backdrop-filter: blur(10px);
-      color:#fff;
-      opacity:.95;
+    .badge-long,.badge-short{
+      position:absolute;left:14px;top:14px;z-index:50;padding:8px 10px;border-radius:999px;
+      background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.08);
+      font-size:11px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;
+      backdrop-filter: blur(10px);color:#fff;opacity:.95;
     }
   </style>
 </head>
@@ -432,110 +227,19 @@
       </div>
 
       <div id="portfolio-container">
-
         <!-- SHORTS -->
         <div id="shorts-wrapper">
           <div class="shorts-grid-wrapper">
-            <div id="shorts-content" class="shorts-grid transition-all duration-500">
-
-              <!-- Short Form – Talking Head -->
-              <div class="video-item aspect-[9/16] yt-short short-talking" data-video-id="z6JMaEGuCjY">
-                <div class="skeleton"></div>
-                <div class="badge-short">Talking Head</div>
-                <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/z6JMaEGuCjY/hqdefault.jpg')"></div>
-                <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
-              </div>
-
-              <div class="video-item aspect-[9/16] yt-short short-talking" data-video-id="ueABS9TACHE">
-                <div class="skeleton"></div>
-                <div class="badge-short">Talking Head</div>
-                <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/ueABS9TACHE/hqdefault.jpg')"></div>
-                <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
-              </div>
-
-              <div class="video-item aspect-[9/16] yt-short short-talking" data-video-id="ouN49K_iwdw">
-                <div class="skeleton"></div>
-                <div class="badge-short">Talking Head</div>
-                <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/ouN49K_iwdw/hqdefault.jpg')"></div>
-                <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
-              </div>
-
-              <!-- Short Form – Real Estate -->
-              <div class="video-item aspect-[9/16] yt-short short-realestate hidden" data-video-id="p5tvffMHIW4">
-                <div class="skeleton"></div>
-                <div class="badge-short">Real Estate</div>
-                <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/p5tvffMHIW4/hqdefault.jpg')"></div>
-                <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
-              </div>
-
-              <div class="video-item aspect-[9/16] yt-short short-realestate hidden" data-video-id="GBX34L6v7CY">
-                <div class="skeleton"></div>
-                <div class="badge-short">Real Estate</div>
-
-                <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/GBX34L6v7CY/hqdefault.jpg')"></div>
-                <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
-              </div>
-
-            </div>
+            <div id="shorts-content" class="shorts-grid transition-all duration-500"></div>
           </div>
         </div>
 
         <!-- LONG FORM -->
-        <div id="long-content" class="hidden long-grid transition-all duration-500">
-
-          <!-- Long Talking -->
-          <div class="video-item aspect-video w-full yt-long long-wrap" data-sub="long-talking" data-video-id="bSQq6W4B2kE">
-            <div class="skeleton"></div>
-            <div class="badge-long">Talking Head</div>
-            <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/bSQq6W4B2kE/hqdefault.jpg')"></div>
-            <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
-          </div>
-
-          <div class="video-item aspect-video w-full yt-long long-wrap" data-sub="long-talking" data-video-id="VUyKrQgAOJo">
-            <div class="skeleton"></div>
-            <div class="badge-long">Talking Head</div>
-            <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/VUyKrQgAOJo/hqdefault.jpg')"></div>
-            <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
-          </div>
-
-          <div class="video-item aspect-video w-full yt-long long-wrap" data-sub="long-talking" data-video-id="rwtU0EQ0j-8">
-            <div class="skeleton"></div>
-            <div class="badge-long">Talking Head</div>
-            <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/rwtU0EQ0j-8/hqdefault.jpg')"></div>
-            <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
-          </div>
-
-          <div class="video-item aspect-video w-full yt-long long-wrap" data-sub="long-talking" data-video-id="mkdGMHs6sRM">
-            <div class="skeleton"></div>
-            <div class="badge-long">Talking Head</div>
-            <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/mkdGMHs6sRM/hqdefault.jpg')"></div>
-            <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
-          </div>
-
-          <!-- Long Documentary -->
-          <div class="video-item aspect-video w-full yt-long long-wrap hidden" data-sub="long-documentary" data-video-id="KfBdcUpL2bA">
-            <div class="skeleton"></div>
-            <div class="badge-long">Documentary</div>
-            <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/KfBdcUpL2bA/hqdefault.jpg')"></div>
-            <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
-          </div>
-
-          <div class="video-item aspect-video w-full yt-long long-wrap hidden" data-sub="long-documentary" data-video-id="0AD9KXuIuGE">
-            <div class="skeleton"></div>
-            <div class="badge-long">Documentary</div>
-            <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/0AD9KXuIuGE/hqdefault.jpg')"></div>
-            <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
-          </div>
-
-          <div class="video-item aspect-video w-full yt-long long-wrap hidden" data-sub="long-documentary" data-video-id="8X7TBZbk0h0">
-            <div class="skeleton"></div>
-            <div class="badge-long">Documentary</div>
-            <div class="yt-thumb" style="background-image:url('https://i.ytimg.com/vi/8X7TBZbk0h0/hqdefault.jpg')"></div>
-            <div class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
-          </div>
-
-        </div>
+        <div id="long-content" class="hidden long-grid transition-all duration-500"></div>
       </div>
+
+      <p id="live-status" hidden class="mt-6 text-xs text-zinc-500"></p>
+
     </div>
   </section>
 
@@ -551,7 +255,7 @@
             </p>
           </div>
           <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-            <a href="https://wa.me/+213553667383" target="_blank"
+            <a href="https://wa.me/213553667383" target="_blank"
               class="w-full md:w-auto text-center bg-[#8b5cf6] hover:bg-[#7c3aed] text-white px-7 py-3.5 rounded-2xl font-extrabold text-sm transition-all duration-300">
               WhatsApp Me
             </a>
@@ -573,23 +277,42 @@
   <script src="https://www.youtube.com/iframe_api"></script>
 
   <script>
-    let players = [];
-    let observerLong = null;
-    let currentTab = 'shorts';
-    let currentSubTab = 'short-talking';
+    /* ============================================================
+      1) SUPABASE CONFIG
+    ============================================================ */
+    const SUPABASE_URL = "https://ajubgliywevrwafnhdyv.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_iuCPHxztz0y9pgbQT5m1UQ_asgQAb7f";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    /* ============================================================
+      2) CATEGORY OPTIONS (same as admin)
+    ============================================================ */
+    const CATEGORY_OPTIONS = {
+      shorts: [
+        { value: "short-talking", label: "Short – Talking Head", badge: "Talking Head" },
+        { value: "short-realestate", label: "Short – Real Estate", badge: "Real Estate" },
+      ],
+      long: [
+        { value: "long-talking", label: "Long – Talking Head", badge: "Talking Head" },
+        { value: "long-documentary", label: "Long – Documentary", badge: "Documentary" },
+      ]
+    };
+
+    /* ============================================================
+      3) STATE
+    ============================================================ */
+    let videos = [];
+    let players = [];
+    let currentTab = "shorts";
+    let currentSubTab = "short-talking";
+
+    /* ============================================================
+      4) YOUTUBE PLAYER HELPERS
+    ============================================================ */
     function pauseAllVideos(exceptPlayer = null) {
       players.forEach(p => {
-        try {
-          if (p && p.pauseVideo && p !== exceptPlayer) p.pauseVideo();
-        } catch(e){}
+        try { if (p && p.pauseVideo && p !== exceptPlayer) p.pauseVideo(); } catch(e){}
       });
-    }
-
-    function destroyPlayer(player) {
-      if (player && typeof player.destroy === 'function') {
-        try { player.destroy(); } catch (e) {}
-      }
     }
 
     function buildYTPlayer(iframeEl, onReadyCb = null) {
@@ -606,9 +329,7 @@
             if (onReadyCb) onReadyCb(e);
           },
           onStateChange: (e) => {
-            if (e.data === YT.PlayerState.PLAYING) {
-              pauseAllVideos(e.target);
-            }
+            if (e.data === YT.PlayerState.PLAYING) pauseAllVideos(e.target);
           }
         }
       });
@@ -618,15 +339,116 @@
     }
 
     function onYouTubeIframeAPIReady() {
-      initShortsClickToPlay();
-      initLongPreviewClickToPlay();
-      initThumbSkeletonFix();
+      initRealtime();
+      refreshFromSupabase();
       initVisibilityChangePause();
-      updateSubTabDisplay();
-      setupShortsScrollLimit();
       window.addEventListener("resize", setupShortsScrollLimit);
     }
 
+    /* ============================================================
+      5) REALTIME SYNC (MAGIC PART)
+    ============================================================ */
+    function initRealtime(){
+      supabaseClient
+        .channel("videos-live")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "videos" },
+          () => {
+            refreshFromSupabase();
+          }
+        )
+        .subscribe();
+    }
+
+    /* ============================================================
+      6) LOAD FROM SUPABASE
+    ============================================================ */
+    async function refreshFromSupabase(){
+      document.getElementById("live-status").textContent = "Loading videos...";
+
+      const { data, error } = await supabaseClient
+        .from("videos")
+        .select("*")
+        .order("position", { ascending: true })
+        .order("created_at", { ascending: false });
+
+      if(error){
+        console.error(error);
+        document.getElementById("live-status").textContent = "Supabase error: " + error.message;
+        return;
+      }
+
+      videos = data || [];
+      renderEverything();
+
+      document.getElementById("live-status").textContent =
+        `Live synced • ${videos.length} video(s)`;
+    }
+
+    /* ============================================================
+      7) RENDER
+    ============================================================ */
+    function renderEverything(){
+      players = [];
+      renderPortfolio();
+      updateSubTabDisplay();
+      setTimeout(() => setupShortsScrollLimit(), 100);
+    }
+
+    function getThumb(videoId){
+      return `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+    }
+
+    function getBadgeText(v){
+      const opt = CATEGORY_OPTIONS[v.category]?.find(o => o.value === v.option);
+      return opt?.badge || "Video";
+    }
+
+    function renderPortfolio(){
+      const shortsGrid = document.getElementById("shorts-content");
+      const longGrid = document.getElementById("long-content");
+      shortsGrid.innerHTML = "";
+      longGrid.innerHTML = "";
+
+      const shorts = videos.filter(v => v.category === "shorts");
+      const longs = videos.filter(v => v.category === "long");
+
+      shorts.forEach(v => shortsGrid.appendChild(buildCard(v)));
+      longs.forEach(v => longGrid.appendChild(buildCard(v)));
+
+      initThumbSkeletonFix();
+      initClickToPlay();
+    }
+
+    function buildCard(v){
+      const div = document.createElement("div");
+
+      const isShort = v.category === "shorts";
+      const badge = getBadgeText(v);
+      const aspect = isShort ? "aspect-[9/16]" : "aspect-video";
+
+      div.className = `video-item ${aspect} ${v.option}`;
+      div.setAttribute("data-video-id", v.youtube_id);
+      div.setAttribute("data-sub", v.option);
+
+      div.innerHTML = `
+        <div class="skeleton"></div>
+        <div class="${isShort ? "badge-short" : "badge-long"}">${badge}</div>
+        <div class="yt-thumb" style="background-image:url('${getThumb(v.youtube_id)}')"></div>
+        <div class="play-btn">
+          <span>
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </span>
+        </div>
+      `;
+
+      return div;
+    }
+
+    /* ============================================================
+      8) PLAY BEHAVIOR
+    ============================================================ */
     function initThumbSkeletonFix() {
       document.querySelectorAll(".video-item").forEach(card => {
         const thumb = card.querySelector(".yt-thumb");
@@ -650,124 +472,108 @@
       });
     }
 
-    /* -------------------- SHORTS -------------------- */
-    function initShortsClickToPlay() {
-      document.querySelectorAll(".yt-short").forEach((card) => {
+    function initClickToPlay(){
+      document.querySelectorAll(".video-item").forEach((card) => {
         const videoId = card.getAttribute("data-video-id");
+        const isShort = card.classList.contains("aspect-[9/16]");
 
-        function startShort() {
+        function start(){
           pauseAllVideos();
 
-          card.innerHTML = `
-            <div class="skeleton"></div>
-            <iframe
-              class="js-short"
-              src="https://www.youtube.com/embed/${videoId}?enablejsapi=1&playsinline=1&rel=0&autoplay=1&mute=0&vq=hd1080"
-              allow="autoplay; encrypted-media"
-              allowfullscreen
-            ></iframe>
-          `;
+          if(isShort){
+            card.innerHTML = `
+              <div class="skeleton"></div>
+              <iframe
+                class="js-short"
+                src="https://www.youtube.com/embed/${videoId}?enablejsapi=1&playsinline=1&rel=0&autoplay=1&mute=0&vq=hd1080"
+                allow="autoplay; encrypted-media"
+                allowfullscreen
+              ></iframe>
+            `;
 
-          const iframe = card.querySelector("iframe");
-          const player = buildYTPlayer(iframe, () => {
-            try { player.setPlaybackQuality("hd1080"); } catch(e){}
-          });
+            const iframe = card.querySelector("iframe");
+            const player = buildYTPlayer(iframe, () => {
+              try { player.setPlaybackQuality("hd1080"); } catch(e){}
+            });
 
-          setTimeout(() => {
-            try { player.playVideo(); } catch(e){}
-          }, 150);
+            setTimeout(() => { try { player.playVideo(); } catch(e){} }, 150);
+
+          }else{
+            card.innerHTML = `
+              <div class="skeleton"></div>
+              <button class="mute-btn" data-muted="1" onclick="toggleMute(event)">
+                <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg>
+                <span>Muted</span>
+              </button>
+              <iframe
+                class="js-long"
+                src="https://www.youtube.com/embed/${videoId}?enablejsapi=1&playsinline=1&rel=0&autoplay=1&mute=1&vq=hd1080"
+                allow="autoplay; encrypted-media"
+                allowfullscreen
+              ></iframe>
+            `;
+
+            const iframe = card.querySelector("iframe");
+            const player = buildYTPlayer(iframe, () => {
+              try { player.setPlaybackQuality("hd1080"); } catch(e){}
+            });
+
+            setTimeout(() => { try { player.playVideo(); } catch(e){} }, 150);
+          }
         }
 
         card.addEventListener("click", () => {
           if (card.querySelector("iframe")) return;
-          startShort();
+          start();
         });
 
         card.setAttribute("tabindex", "0");
         card.addEventListener("keydown", (e) => {
           if (e.key === "Enter") {
             if (card.querySelector("iframe")) return;
-            startShort();
+            start();
           }
         });
       });
     }
 
-    function setupShortsScrollLimit(){
-      // max 2 lignes visibles, scroll si > 8
-      const wrapper = document.querySelector(".shorts-grid-wrapper");
-      const grid = document.querySelector(".shorts-grid");
-      if(!wrapper || !grid) return;
+    function toggleMute(event){
+      event.preventDefault();
+      event.stopPropagation();
 
-      const visibleItems = Array.from(grid.children).filter(el => !el.classList.contains("hidden"));
-      if(visibleItems.length <= 8){
-        wrapper.style.maxHeight = "none";
-        wrapper.style.overflowY = "visible";
-        return;
+      const btn = event.currentTarget;
+      const wrap = btn.closest(".video-item");
+      const iframe = wrap.querySelector("iframe");
+
+      const player = players.find(p => {
+        try { return p.getIframe() === iframe; } catch(e){ return false; }
+      });
+
+      if(!player) return;
+
+      const muted = btn.getAttribute("data-muted") === "1";
+
+      if(muted){
+        try { player.unMute(); } catch(e){}
+        btn.setAttribute("data-muted","0");
+        btn.querySelector("span").textContent = "Sound";
+      }else{
+        try { player.mute(); } catch(e){}
+        btn.setAttribute("data-muted","1");
+        btn.querySelector("span").textContent = "Muted";
       }
-
-      // On calcule la hauteur d’un short visible
-      const first = visibleItems[0];
-      const rect = first.getBoundingClientRect();
-      const itemHeight = rect.height;
-
-      // 2 lignes + gap
-      const computed = window.getComputedStyle(grid);
-      const gap = parseFloat(computed.gap || "16");
-
-      const maxH = (itemHeight * 2) + gap;
-      wrapper.style.maxHeight = maxH + "px";
-      wrapper.style.overflowY = "auto";
     }
 
-    /* -------------------- LONG (Preview + Play) -------------------- */
-    function initLongPreviewClickToPlay() {
-      document.querySelectorAll(".yt-long").forEach((card) => {
-        const videoId = card.getAttribute("data-video-id");
-
-        function startLong() {
-          pauseAllVideos();
-
-          card.innerHTML = `
-            <div class="skeleton"></div>
-            <button class="mute-btn" data-muted="1" onclick="toggleMute(event)">
-              <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg>
-              <span>Muted</span>
-            </button>
-            <iframe
-              class="js-long"
-              src="https://www.youtube.com/embed/${videoId}?enablejsapi=1&playsinline=1&rel=0&autoplay=1&mute=1&vq=hd1080"
-              allow="autoplay; encrypted-media"
-              allowfullscreen
-            ></iframe>
-          `;
-
-          const iframe = card.querySelector("iframe");
-          const player = buildYTPlayer(iframe, () => {
-            try { player.setPlaybackQuality("hd1080"); } catch(e){}
-          });
-
-          setTimeout(() => {
-            try { player.playVideo(); } catch(e){}
-          }, 150);
-        }
-
-        card.addEventListener("click", () => {
-          if (card.querySelector("iframe")) return;
-          startLong();
-        });
-
-        card.setAttribute("tabindex", "0");
-        card.addEventListener("keydown", (e) => {
-          if (e.key === "Enter") {
-            if (card.querySelector("iframe")) return;
-            startLong();
-          }
-        });
+    function initVisibilityChangePause() {
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) pauseAllVideos();
       });
+      window.addEventListener("blur", () => pauseAllVideos());
     }
 
-    /* -------------------- Tabs -------------------- */
+    /* ============================================================
+      9) TABS + SUBTABS
+    ============================================================ */
     function switchTab(type) {
       pauseAllVideos();
 
@@ -811,7 +617,7 @@
         btnShortTalking.classList.toggle('active', currentSubTab === 'short-talking');
         btnShortRealEstate.classList.toggle('active', currentSubTab === 'short-realestate');
 
-        document.querySelectorAll('#shorts-content .yt-short').forEach(el => {
+        document.querySelectorAll('#shorts-content .video-item').forEach(el => {
           el.classList.toggle('hidden', !el.classList.contains(currentSubTab));
         });
 
@@ -824,8 +630,8 @@
         btnLongTalking.classList.toggle('active', currentSubTab === 'long-talking');
         btnLongDoc.classList.toggle('active', currentSubTab === 'long-documentary');
 
-        document.querySelectorAll('#long-content [data-sub]').forEach(el => {
-          el.classList.toggle('hidden', el.dataset.sub !== currentSubTab);
+        document.querySelectorAll('#long-content .video-item').forEach(el => {
+          el.classList.toggle('hidden', el.getAttribute("data-sub") !== currentSubTab);
         });
       }
 
@@ -841,41 +647,29 @@
       document.getElementById('work').scrollIntoView({ behavior: 'smooth' });
     }
 
-    /* -------------------- Mute -------------------- */
-    function toggleMute(event){
-      event.preventDefault();
-      event.stopPropagation();
+    function setupShortsScrollLimit(){
+      const wrapper = document.querySelector(".shorts-grid-wrapper");
+      const grid = document.querySelector(".shorts-grid");
+      if(!wrapper || !grid) return;
 
-      const btn = event.currentTarget;
-      const wrap = btn.closest(".video-item");
-      const iframe = wrap.querySelector("iframe");
-
-      const player = players.find(p => {
-        try { return p.getIframe() === iframe; } catch(e){ return false; }
-      });
-
-      if(!player) return;
-
-      const muted = btn.getAttribute("data-muted") === "1";
-
-      if(muted){
-        try { player.unMute(); } catch(e){}
-        btn.setAttribute("data-muted","0");
-        btn.querySelector("span").textContent = "Sound";
-      }else{
-        try { player.mute(); } catch(e){}
-        btn.setAttribute("data-muted","1");
-        btn.querySelector("span").textContent = "Muted";
+      const visibleItems = Array.from(grid.children).filter(el => !el.classList.contains("hidden"));
+      if(visibleItems.length <= 8){
+        wrapper.style.maxHeight = "none";
+        wrapper.style.overflowY = "visible";
+        return;
       }
-    }
 
-    function initVisibilityChangePause() {
-      document.addEventListener("visibilitychange", () => {
-        if (document.hidden) pauseAllVideos();
-      });
-      window.addEventListener("blur", () => pauseAllVideos());
+      const first = visibleItems[0];
+      const rect = first.getBoundingClientRect();
+      const itemHeight = rect.height;
+
+      const computed = window.getComputedStyle(grid);
+      const gap = parseFloat(computed.gap || "16");
+
+      const maxH = (itemHeight * 2) + gap;
+      wrapper.style.maxHeight = maxH + "px";
+      wrapper.style.overflowY = "auto";
     }
   </script>
 </body>
 </html>
-
